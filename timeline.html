@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>长征历史时间线 - 毛概小组网站</title>
+
+    <!-- 引入 TimelineJS 的 CSS 样式文件 (来自官方 CDN) -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.knightlab.com/libs/timeline3/latest/css/timeline.css">
+
+    <!-- 自定义 CSS 样式块 -->
+    <style>
+        /* 通用样式 - 应用于所有页面 */
+        body {
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px; /* 给 body 留出一些内边距 */
+            background-color: #f4f4f4;
+            color: #333;
+             /* 这里不再隐藏 body 的 overflow，如果内容总高度超过视口，允许浏览器滚动 */
+        }
+         /* container 容器，包裹导航和时间线div */
+        .container {
+            max-width: 960px; /* 内容区域最大宽度 */
+            margin: 0 auto; /* 居中显示 */
+            background-color: #fff; /* 内容区域背景色 */
+            padding: 0 20px 20px 20px; /* 内边距，顶部为0 */
+            box-shadow: 0 0 10px rgba(0,0,0,0.1); /* 阴影效果 */
+            border-radius: 8px; /* 圆角 */
+             /* height: calc(100vh - 40px); */ /* 如果允许内容撑开，容器高度就不再固定为视口高度 */
+            overflow: hidden; /* 隐藏容器溢出内容，防止容器自身出现滚动条 */
+            display: flex; /* 使用 flex 布局 */
+            flex-direction: column; /* 项目垂直排列 */
+            min-height: calc(100vh - 40px); /* 确保容器至少占满视口高度 */
+        }
+         header {
+             text-align: center;
+             margin-bottom: 15px;
+             padding-top: 15px;
+         }
+        h1, h2 {
+            color: #c0392b;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+         h1 {
+             margin-top: 0;
+         }
+        nav ul {
+            list-style: none;
+            padding: 0;
+            text-align: center;
+            margin-bottom: 20px;
+             border-bottom: 1px solid #eee;
+             padding-bottom: 10px;
+        }
+        nav li {
+            display: inline-block;
+            margin: 0 15px;
+        }
+        nav a {
+            text-decoration: none;
+            color: #34495e;
+            font-weight: bold;
+            font-size: 1.1em;
+            padding: 5px 0;
+        }
+        nav a:hover {
+            color: #e74c3c;
+        }
+         footer {
+             margin-top: auto; /* 将 footer 推到底部（在 flex 容器中） */
+             text-align: center;
+             font-size: 0.9em;
+             color: #666;
+             border-top: 1px solid #eee;
+             padding-top: 10px;
+         }
+
+
+        /* === 时间线页面特有样式 === */
+
+        /* TimelineJS 主要容器 */
+        #timeline-embed {
+            width: 100%;
+            flex-grow: 1; /* 让它填充 container 的剩余高度 */
+            overflow: hidden; /* 隐藏时间线容器自身的滚动条，TimelineJS 会生成自己的 */
+             /* 如果你想让时间线区域可以随着内部内容撑大，可能需要移除这里的 overflow: hidden; */
+             /* 但移除后 TimelineJS 内部布局可能受影响，先保留 */
+        }
+
+
+        /* === 添加的样式开始：移除内部滚动条并允许内容撑开 === */
+
+        /* 目标：移除时间线主显示区域内，事件幻灯片内部的滚动条 */
+        /* TimelineJS 可能会在 .tl-story 或其子元素上设置 overflow */
+
+        /* 尝试针对整个事件幻灯片容器 */
+        #timeline-embed .tl-story {
+            overflow: visible !important; /* 强制内容可见，移除滚动条 */
+            height: auto !important; /* 允许高度根据内容自动调整 */
+            max-height: none !important; /* 移除可能的最大高度限制 */
+        }
+
+        /* 尝试针对事件内容容器 (包含文本和媒体的区域) */
+        #timeline-embed .tl-story .tl-slide-content-container {
+             overflow: visible !important;
+             height: auto !important;
+             max-height: none !important;
+        }
+
+        /* 尝试针对文本区域 */
+        #timeline-embed .tl-story .tl-text {
+             overflow: visible !important;
+             height: auto !important;
+             max-height: none !important;
+             width: auto !important; /* 尝试让宽度不固定，以便文本和媒体能垂直排列 */
+             max-width: none !important;
+             display: block !important; /* 让文本区域独占一行 */
+             float: none !important; /* 移除可能的浮动 */
+        }
+
+         /* 尝试针对媒体区域 */
+        #timeline-embed .tl-story .tl-media {
+             overflow: visible !important;
+             height: auto !important;
+             max-height: none !important;
+             width: auto !important; /* 尝试让宽度不固定，以便文本和媒体能垂直排列 */
+             max-width: 90% !important; /* 媒体最大宽度可以限制一下，例如 90% */
+             display: block !important; /* 让媒体区域独占一行 */
+             margin: 20px auto !important; /* 在媒体区域上下增加间距并居中 */
+             float: none !important; /* 移除可能的浮动 */
+        }
+
+        /* 针对媒体容器内的 iframe */
+        #timeline-embed .tl-story .tl-media iframe {
+            width: 100% !important;  /* 宽度占满其父容器 (.tl-media) */
+            height: 500px !important; /* 保持固定高度，根据需要调整 */
+            display: block !important;
+            margin: 0 auto !important;
+            border: none !important;
+        }
+
+         /* 如果是 video 标签 */
+         #timeline-embed .tl-story .tl-media video {
+             width: 100% !important;
+             height: auto !important;
+             display: block !important;
+             margin: 0 auto !important;
+         }
+
+
+        /* === 添加的样式结束 === */
+
+
+        /* 底部时间导航条样式 (保留之前的调整) */
+        #timeline-embed .tl-timenav {
+            height: 180px !important; /* 增加高度 */
+            background-color: #34495e;
+            color: #ecf0f1;
+        }
+
+        #timeline-embed .tl-timenav .tl-slide {
+             padding: 5px 8px !important;
+             border-radius: 4px !important;
+        }
+
+        #timeline-embed .tl-timenav .tl-slide .tl-headline {
+            font-size: 0.9em !important;
+            line-height: 1.3 !important;
+            font-weight: bold !important;
+            color: #ecf0f1 !important;
+        }
+
+         #timeline-embed .tl-timenav .tl-slide.tl-active {
+             background-color: #e74c3c !important;
+             color: #ffffff !important;
+         }
+
+          #timeline-embed .tl-timenav .tl-slide.tl-active .tl-headline {
+              color: #ffffff !important;
+          }
+
+        #timeline-embed .tl-timenav .tl-timeline {
+             border-top-color: #555 !important;
+        }
+
+         #timeline-embed .tl-timenav .tl-time {
+             color: #f1c40f !important;
+             font-weight: bold !important;
+         }
+
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+             <h1>毛泽东理论在长征中的体现</h1>
+        </header>
+
+        <nav>
+            <h2>网站导航</h2>
+            <ul>
+                <li><a href="index.html">首页</a></li>
+                <li><a href="timeline.html">长征历史时间线</a></li>
+                <li><a href="theory_in_long_march.html">长征中的理论体现</a></li>
+                <li><a href="key_figures.html">长征中的关键人物</a></li>
+            </ul>
+        </nav>
+
+        <!-- 这是时间线将要显示的地方。TimelineJS 会在这个 div 中生成时间线内容 -->
+        <div id="timeline-embed"></div>
+
+        <footer>
+             <p>小组信息：[你的小组名称/成员列表]</p>
+             <p>© 2023 [你的小组名称]</p>
+        </footer>
+
+    </div> <!-- 容器结束 -->
+
+    <!-- 在 body 底部引入 TimelineJS 的 JavaScript 库 -->
+    <script src="https://cdn.knightlab.com/libs/timeline3/latest/js/timeline.js"></script>
+
+    <!-- 这是启动 TimelineJS 的自定义 JavaScript 代码块 -->
+    <script>
+        // == 第一步：设置配置选项 ==
+        var options = {
+            language: 'zh-cn', // 设置界面语言为中文
+            // initial_zoom: 0, // 初始缩放级别
+            // timenav_position: 'bottom', // 时间导航条在底部显示
+        };
+
+        // == 第二步：指定你的数据源 ==
+        // *** 请将下面的示例链接替换成你从 Google Sheet 发布获得的真实 CSV 链接 ***
+        var data_source = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSn7rDQeVj7MVKN5NY9d6XcVh0mOaj0fpNzZPdprgWQBdV9FJzPF-Ey-l96GnQ6SpbJlwG3NWjniAwG/pub?output=csv'; // <-- 替换成你的真实链接！
+
+        // == 第三步：创建并显示时间线 ==
+        window.timeline = new TL.Timeline('timeline-embed', data_source, options);
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>长征历史时间线 - 全屏</title> <!-- 修改标题以区分 -->
+
+    <!-- 引入 TimelineJS 的 CSS 样式文件 (来自官方 CDN) -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.knightlab.com/libs/timeline3/latest/css/timeline.css">
+
+    <!-- 自定义 CSS 样式，让时间线占满整个页面 -->
+    <style>
+        /* 确保 html 和 body 占满整个视口，移除默认边距，隐藏滚动条 */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* 隐藏溢出内容，确保全屏效果 */
+        }
+
+        /* 让时间线容器 (#timeline-embed) 占满其父容器（body），也就是整个浏览器窗口区域 */
+        #timeline-embed {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* === 可选：如果你之前调整过视频尺寸，可以将那些 CSS 规则复制到这里 === */
+        /* 目标：让包含媒体内容的容器 (.tl-media) 有足够的空间 */
+        .tl-story .tl-media {
+            width: 80% !important; /* 媒体区域占幻灯片内容区域的 80% */
+            max-width: 80% !important;
+            margin: 0 auto 20px auto !important; /* 居中显示 */
+            float: none !important; /* 取消浮动 */
+            display: block !important; /* 块级元素 */
+            max-height: 80vh !important; /* 最大高度不超过视口高度的 80% */
+            overflow-y: auto !important; /* 允许垂直滚动 */
+        }
+
+        /* 目标：直接控制 iframe 的尺寸，让视频变大 */
+        .tl-story .tl-media iframe {
+            width: 100% !important;  /* 宽度占满其父容器 (.tl-media) */
+            height: 500px !important; /* 根据需要调整这个高度 */
+            display: block !important;
+            margin: 0 auto !important;
+            border: none !important;
+        }
+
+         /* 如果是 video 标签 */
+         .tl-story .tl-media video {
+             width: 100% !important;
+             height: auto !important;
+             display: block !important;
+             margin: 0 auto !important;
+         }
+         /* === 可选样式结束 === */
+
+
+         /* === 可选：如果你想移除事件幻灯片内部的滚动条，可以将那些 CSS 规则复制到这里 === */
+         /* 目标：移除时间线主显示区域内，事件幻灯片内部的滚动条 */
+        #timeline-embed .tl-story,
+        #timeline-embed .tl-story .tl-slide-content-container,
+        #timeline-embed .tl-story .tl-text,
+        #timeline-embed .tl-story .tl-media {
+            overflow: visible !important; /* 强制内容可见，移除滚动条 */
+            height: auto !important; /* 允许高度根据内容自动调整 */
+            max-height: none !important; /* 移除最大高度限制 */
+        }
+
+         /* 调整文本和媒体的宽度和显示方式以便垂直排列 */
+        #timeline-embed .tl-story .tl-text,
+        #timeline-embed .tl-story .tl-media {
+             width: auto !important; /* 宽度自动 */
+             max-width: none !important; /* 移除最大宽度限制 */
+             display: block !important; /* 独占一行 */
+             float: none !important; /* 移除浮动 */
+        }
+         /* 如果媒体需要限制最大宽度，可以单独给 .tl-media 设置 */
+         #timeline-embed .tl-story .tl-media {
+              max-width: 90% !important; /* 媒体最大宽度可以限制一下，例如 90% */
+              margin: 20px auto !important; /* 增加上下边距并居中 */
+         }
+
+        /* === 可选样式结束 === */
+
+
+    </style>
+</head>
+<body>
+
+    <!-- 这是时间线将要显示的地方。让它占满整个页面 -->
+    <div id="timeline-embed"></div>
+
+    <!-- 在 body 底部引入 TimelineJS 的 JavaScript 代码 -->
+    <script src="https://cdn.knightlab.com/libs/timeline3/latest/js/timeline.js"></script>
+
+    <!-- 这是启动 TimelineJS 的自定义 JavaScript 代码块 -->
+    <script>
+        // == 设置配置选项 ==
+        var options = {
+            language: 'zh-cn', // 设置界面语言为中文
+            // initial_zoom: 0,
+            // timenav_position: 'bottom',
+        };
+
+        // == 指定你的数据源 ==
+        // *** 请将下面的示例链接替换成你从 Google Sheet 发布获得的真实 CSV 链接 ***
+        var data_source = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSn7rDQeVj7MVKN5NY9d6XcVh0mOaj0fpNzZPdprgWQBdV9FJzPF-Ey-l96GnQ6SpbJlwG3NWjniAwG/pub?output=csv'; // <-- 替换成你的真实链接！
+
+        // == 创建并显示时间线 ==
+        window.timeline = new TL.Timeline('timeline-embed', data_source, options);
+    </script>
+
+</body>
+</html>
